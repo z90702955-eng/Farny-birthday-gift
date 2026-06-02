@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Farny ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#030712;
+overflow-x:hidden;
+color:white;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-2;
+}
+
+.overlay{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at center,
+rgba(168,85,247,.15),
+transparent 60%);
+z-index:-1;
+}
+
+.section{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:30px;
+text-align:center;
+}
+
+.glass{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(16px);
+border:1px solid rgba(255,255,255,.12);
+border-radius:30px;
+padding:30px;
+max-width:800px;
+box-shadow:0 0 40px rgba(255,255,255,.08);
+}
+
+h1{
+font-size:clamp(2.5rem,7vw,5rem);
+margin-bottom:15px;
+}
+
+h2{
+font-size:clamp(1.8rem,5vw,3rem);
+margin-bottom:20px;
+}
+
+p{
+line-height:1.8;
+font-size:1.1rem;
+}
+
+.btn{
+margin-top:25px;
+padding:15px 35px;
+border:none;
+border-radius:999px;
+cursor:pointer;
+font-size:1rem;
+font-weight:600;
+color:white;
+background:linear-gradient(45deg,#ff4d8d,#a855f7);
+transition:.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+.hidden{
+display:none;
+}
+
+#title{
+animation:fadeIn 3s ease;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(40px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.typewriter{
+border-right:3px solid white;
+white-space:pre-wrap;
+overflow:hidden;
+}
+
+.heart{
+position:fixed;
+font-size:20px;
+pointer-events:none;
+animation:float linear forwards;
+}
+
+@keyframes float{
+0%{
+transform:translateY(0);
+opacity:1;
+}
+100%{
+transform:translateY(-100vh);
+opacity:0;
+}
+}
+
+.choice{
+margin:10px;
+}
+
+.countdown{
+font-size:3rem;
+font-weight:700;
+margin:20px 0;
+}
+
+.final-message{
+font-size:1.2rem;
+line-height:2;
+}
+
+#musicBtn{
+position:fixed;
+top:15px;
+right:15px;
+z-index:999;
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="overlay"></div>
+
+<button id="musicBtn" class="btn">🎵 Play Music</button>
+
+<!-- Replace this with your own MP3 URL -->
+<audio id="bgmusic" loop>
+<source src="YOUR_MP3_URL_HERE.mp3" type="audio/mpeg">
+</audio>
+
+<section class="section" id="intro">
+<div class="glass">
+<h1 id="title">✨ A Story For Farny ✨</h1>
+<p>
+In a world filled with billions of people...
+there is one person this little universe was created for.
+</p>
+
+<button class="btn" onclick="startJourney()">
+Begin The Journey ❤️
+</button>
+</div>
+</section>
+
+<section class="section hidden" id="chapter1">
+<div class="glass">
+<h2>Chapter One</h2>
+<p id="story1" class="typewriter"></p>
+
+<button class="btn hidden" id="next1"
+onclick="showChapter2()">
+Continue →
+</button>
+</div>
+</section>
+
+<section class="section hidden" id="chapter2">
+<div class="glass">
+<h2>The Quest</h2>
+
+<p>
+A special mission appears...
+</p>
+
+<div class="choice">
+<button class="btn" onclick="quest(1)">
+Continue
+</button>
+</div>
+
+<div class="choice">
+<button class="btn" onclick="quest(2)">
+Definitely Continue
+</button>
+</div>
+
+<div class="choice">
+<button class="btn" onclick="quest(3)">
+Absolutely Continue
+</button>
+</div>
+
+<p id="questText"></p>
+</div>
+</section>
+
+<section class="section hidden" id="vault">
+<div class="glass">
+<h2>🔐 Secret Vault</h2>
+
+<p>
+Only Farny can unlock this.
+</p>
+
+<button class="btn" onclick="unlockVault()">
+Unlock Secret
+</button>
+</div>
+</section>
+
+<section class="section hidden" id="countdownSection">
+<div class="glass">
+<h2>Preparing Birthday Magic...</h2>
+
+<div class="countdown" id="countdown">5</div>
+</div>
+</section>
+
+<section class="section hidden" id="final">
+<div class="glass">
+<h1>🎂 Happy Birthday Farny 🎂</h1>
+
+<div class="final-message">
+<p id="letter"></p>
+</div>
+
+<br>
+
+<h2>❤️ From Zero ❤️</h2>
+</div>
+</section>
+
+<script>
+const canvas=document.getElementById("stars");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let stars=[];
+
+for(let i=0;i<250;i++){
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2
+});
+}
+
+function animateStars(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="white";
+
+stars.forEach(s=>{
+ctx.beginPath();
+ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+ctx.fill();
+
+s.y+=0.15;
+
+if(s.y>canvas.height){
+s.y=0;
+}
+});
+
+requestAnimationFrame(animateStars);
+}
+
+animateStars();
+
+document.getElementById("musicBtn")
+.addEventListener("click",()=>{
+document.getElementById("bgmusic").play();
+});
+
+function typeText(el,text,speed,done){
+let i=0;
+
+let timer=setInterval(()=>{
+el.textContent+=text.charAt(i);
+i++;
+
+if(i>=text.length){
+clearInterval(timer);
+if(done) done();
+}
+},speed);
+}
+
+function startJourney(){
+document.getElementById("intro").classList.add("hidden");
+document.getElementById("chapter1").classList.remove("hidden");
+
+typeText(
+document.getElementById("story1"),
+"Dear Farny...\n\nToday isn't just another day.\n\nIt's a reminder that someone special exists.\nSomeone who can make an ordinary moment feel brighter.\nSomeone worth celebrating.\n\nAnd today is your day. ❤️",
+30,
+()=>{
+document.getElementById("next1").classList.remove("hidden");
+}
+);
+}
+
+function showChapter2(){
+document.getElementById("chapter1").classList.add("hidden");
+document.getElementById("chapter2").classList.remove("hidden");
+}
+
+function quest(level){
+
+const messages={
+1:"You discovered a smile. 😊",
+2:"You discovered happiness. ✨",
+3:"You discovered the final key. ❤️"
+};
+
+document.getElementById("questText").innerHTML=
+messages[level];
+
+if(level===3){
+setTimeout(()=>{
+document.getElementById("chapter2").classList.add("hidden");
+document.getElementById("vault").classList.remove("hidden");
+},1500);
+}
+}
+
+function unlockVault(){
+
+for(let i=0;i<120;i++){
+
+let heart=document.createElement("div");
+
+heart.className="heart";
+heart.innerHTML="❤️";
+
+heart.style.left=Math.random()*100+"vw";
+heart.style.bottom="-30px";
+heart.style.animationDuration=
+(3+Math.random()*4)+"s";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(),7000);
+}
+
+document.getElementById("vault").classList.add("hidden");
+document.getElementById("countdownSection").classList.remove("hidden");
+
+let num=5;
+
+const cd=setInterval(()=>{
+num--;
+document.getElementById("countdown").innerText=num;
+
+if(num===0){
+
+clearInterval(cd);
+
+document.getElementById("countdownSection")
+.classList.add("hidden");
+
+document.getElementById("final")
+.classList.remove("hidden");
+
+showLetter();
+}
+},1000);
+}
+
+function showLetter(){
+
+const msg=
+`Dear Farny,
+
+This website isn't really the gift.
+
+The gift is the reminder that somewhere in this world,
+someone wanted to create something just for you.
+
+A small universe.
+A small adventure.
+A small memory.
+
+You deserve happiness,
+beautiful moments,
+big dreams,
+and endless reasons to smile.
+
+No matter where life takes you,
+I hope today brings laughter,
+warmth,
+and unforgettable memories.
+
+Thank you for being you.
+
+Happy Birthday ❤️
+
+— Zero`;
+
+typeText(
+document.getElementById("letter"),
+msg,
+25
+);
+}
+</script>
+
+</body>
+</html>
